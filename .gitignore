@@ -1,0 +1,11 @@
+# virtual env
+venv/
+
+# secrets
+.env
+kaggle.json
+
+# data
+data/
+
+__pycache__/
