@@ -2,10 +2,6 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Telco Customer Churn – Dataset Setup</title>
-</head>
 <body>
 
 <h1>Telco Customer Churn – Local Dataset Setup</h1>
@@ -16,7 +12,7 @@ This project downloads and loads the <strong>Telco Customer Churn</strong> datas
 
 <hr>
 
-<h2>✅ 1. Project Structure</h2>
+<h2>1. Project Structure</h2>
 
 <pre>
 customer_churn_project/
