@@ -3,6 +3,12 @@ from dotenv import load_dotenv
 import pandas as pd
 import zipfile
 import subprocess
+from sklearn.model_selection import train_test_split, trait_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScalar
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
 
 # Load .env
 load_dotenv()
@@ -45,8 +51,45 @@ def load_csv():
     print(df.head())
     return df
 
+# Data preprocessing
+def preprocess_data(df):
+    print("\nPreprocessing data...")
+    df = df.drop("customerID", axis=1)
+    df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
+    df["TotalCharges"].fillna(df["TotalCharges"].median(), inplace=True)
+    df["Churn"] = df["Churn"].map({"Yes": 1, "No": 0})
+    
+    cat_cols = df.select_dtypes(include=["object"]).columns
+    df = pd.get_dummies(df, columns = cat_cols, drop_first = True)
+    
+    X = df.drop("Churn", axis=1)
+    y = df["Churn"]
+    
+    scalar = StandardScalar()
+    X_scaled = scalar.fit_transform(X)
+    
+    return X_scaled, y
+
+# Train Models
+def train_models(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size = 0.2, random_state = 42
+    )
+    
+    # logistic regression model
+    log_model = LogisticRegression(max_iter = 1000)
+    log_model.fit(X_train, y_train)
+    y_pred_log = log_model.predict(X_test)
+    
+    # decision tree model
+    tree_model = DecisionTreeClassifier(max_depth=5, random_state=42)
+    tree_model.fit(X_train, y_train)
+    y_pred_tree = tree_model.predict(X_test)
+    
 
 if __name__ == "__main__":
     download_kaggle_dataset()
     unzip_dataset()
     df = load_csv()
+    X, y = preprocess_data(df)
+    train_models(X, y)
