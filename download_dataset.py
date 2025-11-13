@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 import pandas as pd
 import zipfile
 import subprocess
-from sklearn.model_selection import train_test_split, trait_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScalar
+from sklearn.model_selection import train_test_split #, trait_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -65,7 +65,7 @@ def preprocess_data(df):
     X = df.drop("Churn", axis=1)
     y = df["Churn"]
     
-    scalar = StandardScalar()
+    scalar = StandardScaler() # changed it from StandardScalar
     X_scaled = scalar.fit_transform(X)
     
     return X_scaled, y
@@ -73,7 +73,7 @@ def preprocess_data(df):
 # Train Models
 def train_models(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size = 0.2, random_state = 42
+        X, y, test_size = 0.2, random_state = 42  
     )
     
     # logistic regression model
@@ -85,6 +85,17 @@ def train_models(X, y):
     tree_model = DecisionTreeClassifier(max_depth=5, random_state=42)
     tree_model.fit(X_train, y_train)
     y_pred_tree = tree_model.predict(X_test)
+    
+    # --- Evaluation Section ---
+    print("\n--- Decision Tree Evaluation ---")
+    print("Accuracy:", accuracy_score(y_test, y_pred_tree))
+    print("Classification Report:\n", classification_report(y_test, y_pred_tree))
+    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_tree))
+
+    print("\n--- Logistic Regression Evaluation ---")
+    print("Accuracy:", accuracy_score(y_test, y_pred_log))
+    print("Classification Report:\n", classification_report(y_test, y_pred_log))
+    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_log))
     
 
 if __name__ == "__main__":
