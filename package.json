@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "pandas": "^0.0.3",
-    "python-dotenv": "^0.0.1-security",
-    "scikit-learn": "^0.1.0"
-  }
-}
