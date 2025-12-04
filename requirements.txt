@@ -1,4 +1,5 @@
-kaggle
 pandas
-python-dotenv
 numpy
+scikit-learn
+python-dotenv
+kaggle
