@@ -1,7 +1,8 @@
 import os
 import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 
@@ -36,9 +37,8 @@ def train_models():
     tree_model = DecisionTreeClassifier(max_depth=5, random_state=42)
     tree_model.fit(X_train, y_train)
 
-    # linear regression model
-    linear_model = LinearRegression()
-    linear_model.fit(X_train, y_train)
+    knn_model = KNeighborsClassifier(n_neighbors=5, weights="distance", metric="minkowski", p=2)
+    knn_model.fit(X_train, y_train)
 
     # SVM model
     svm_model = SVC(kernel="rbf", C=1.0, gamma="scale")
@@ -47,7 +47,7 @@ def train_models():
     # Save all models
     joblib.dump(log_model, os.path.join(MODELS_DIR, "log_model.joblib"))
     joblib.dump(tree_model, os.path.join(MODELS_DIR, "tree_model.joblib"))
-    joblib.dump(linear_model, os.path.join(MODELS_DIR, "linear_model.joblib"))
+    joblib.dump(knn_model, os.path.join(MODELS_DIR, "knn_model.joblib"))
     joblib.dump(svm_model, os.path.join(MODELS_DIR, "svm_model.joblib"))
 
     # Save test data for evaluation

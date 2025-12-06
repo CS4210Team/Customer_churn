@@ -14,7 +14,7 @@ def evaluate_models():
 
     log_model = joblib.load(os.path.join(MODELS_DIR, "log_model.joblib"))
     tree_model = joblib.load(os.path.join(MODELS_DIR, "tree_model.joblib"))
-    linear_model = joblib.load(os.path.join(MODELS_DIR, "linear_model.joblib"))
+    knn_model = joblib.load(os.path.join(MODELS_DIR, "knn_model.joblib"))
     svm_model = joblib.load(os.path.join(MODELS_DIR, "svm_model.joblib"))
 
     # --- Decision Tree Evaluation ---
@@ -41,15 +41,10 @@ def evaluate_models():
     cm_svm = confusion_matrix(y_test, y_pred_svm)
     print("Confusion Matrix:\n", pd.DataFrame(cm_svm, index=["Actual 0", "Actual 1"], columns=["Pred 0", "Pred 1"]))
     
-    # --- Linear Regression Evaluation ---
-    print("\n--- Linear Regression Evaluation ---")
-    y_pred_linear = linear_model.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred_linear)
-    r2 = r2_score(y_test, y_pred_linear)
-    print("Mean Squared Error:", mse)
-    print("R² Score:", r2)
-    table = pd.DataFrame({
-        "Metric": ["Mean Squared Error", "R² Score"],
-        "Value": [mse, r2]
-    })
-    print(table)
+    # --- K Nearest Neighbors Evaluation ---
+    print("\n--- KNN Evaluation ---")
+    y_pred_knn = knn_model.predict(X_test)
+    print("Accuracy:", accuracy_score(y_test, y_pred_knn))
+    print("Classification Report:\n", classification_report(y_test, y_pred_knn))
+    cm_knn = confusion_matrix(y_test, y_pred_knn)
+    print("Confusion Matrix:\n", pd.DataFrame(cm_knn, index=["Actual 0", "Actual 1"], columns=["Pred 0", "Pred 1"]))
