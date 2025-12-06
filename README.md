@@ -90,6 +90,7 @@ KAGGLE_KEY=your_kaggle_api_key
 
 <pre>
 python main.py
+streamlit run dashboard.py (for UI)
 </pre>
 
 <p>This script will:</p>
