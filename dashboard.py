@@ -5,7 +5,8 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_squared_error, r2_score, make_scorer, precision_score, recall_score, f1_score
+from sklearn.model_selection import cross_val_score
 
 st.set_page_config(page_title="Customer Churn ML Dashboard", layout="wide")
 st.title("Customer Churn Report")
@@ -85,6 +86,36 @@ models = {
 
 X_test, y_test = joblib.load(os.path.join(MODELS_DIR, "test_data.joblib"))
 
+# --- Cross-Validation Section ---
+st.subheader("Cross-Validation Scores")
+
+# Option to run CV
+run_cv = st.checkbox("Run cross-validation?", value=False)
+
+if run_cv:
+    cv_folds = st.slider("Select number of folds:", min_value=2, max_value=10, value=5)
+    cv_metrics = []
+
+    # Define scorers for CV
+    scoring = {
+        "Accuracy": "accuracy",
+        "Precision": make_scorer(precision_score, average="weighted", zero_division=0),
+        "Recall": make_scorer(recall_score, average="weighted", zero_division=0),
+        "F1-score": make_scorer(f1_score, average="weighted", zero_division=0)
+    }
+
+    for name, model in models.items():
+        scores_dict = {}
+        scores_dict["Model"] = name
+        for metric_name, scorer in scoring.items():
+            scores = cross_val_score(model, X_test, y_test, cv=cv_folds, scoring=scorer)
+            scores_dict[f"{metric_name} Mean"] = round(scores.mean(), 3)
+            scores_dict[f"{metric_name} Std"] = round(scores.std(), 3)
+        cv_metrics.append(scores_dict)
+
+    cv_df = pd.DataFrame(cv_metrics)
+    st.dataframe(cv_df)
+    
 # --- Eval models ---
 st.subheader("Model Performance Comparison")
 

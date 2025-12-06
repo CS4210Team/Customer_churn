@@ -10,7 +10,7 @@ from .data_utils import download_kaggle_dataset, unzip_dataset, load_csv, prepro
 
 # Save models inside project/models
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "models")
+MODELS_DIR = os.path.join(BASE_DIR, "project", "models")
 
 os.makedirs(MODELS_DIR, exist_ok=True)
 
@@ -52,5 +52,7 @@ def train_models():
 
     # Save test data for evaluation
     joblib.dump((X_test, y_test), os.path.join(MODELS_DIR, "test_data.joblib"))
+    joblib.dump((X, y), os.path.join(MODELS_DIR, "full_data.joblib"))
+
 
     print("Training complete. Models and test data saved in the 'models' folder.")
