@@ -1,5 +1,6 @@
 import os
 import joblib
+import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, mean_squared_error, r2_score
 
 # Load models from project/models
@@ -21,15 +22,25 @@ def evaluate_models():
     y_pred_tree = tree_model.predict(X_test)
     print("Accuracy:", accuracy_score(y_test, y_pred_tree))
     print("Classification Report:\n", classification_report(y_test, y_pred_tree))
-    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_tree))
+    cm_tree = confusion_matrix(y_test, y_pred_tree)
+    print("Confusion Matrix:\n", pd.DataFrame(cm_tree, index=["Actual 0", "Actual 1"], columns=["Pred 0", "Pred 1"]))
 
     # --- Logistic Regression Evaluation ---
     print("\n--- Logistic Regression Evaluation ---")
     y_pred_log = log_model.predict(X_test)
     print("Accuracy:", accuracy_score(y_test, y_pred_log))
     print("Classification Report:\n", classification_report(y_test, y_pred_log))
-    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_log))
+    cm_log = confusion_matrix(y_test, y_pred_log)
+    print("Confusion Matrix:\n", pd.DataFrame(cm_log, index=["Actual 0", "Actual 1"], columns=["Pred 0", "Pred 1"]))
 
+    # --- SVM Evaluation ---
+    print("\n--- SVM Evaluation ---")
+    y_pred_svm = svm_model.predict(X_test)
+    print("Accuracy:", accuracy_score(y_test, y_pred_svm))
+    print("Classification Report:\n", classification_report(y_test, y_pred_svm))
+    cm_svm = confusion_matrix(y_test, y_pred_svm)
+    print("Confusion Matrix:\n", pd.DataFrame(cm_svm, index=["Actual 0", "Actual 1"], columns=["Pred 0", "Pred 1"]))
+    
     # --- Linear Regression Evaluation ---
     print("\n--- Linear Regression Evaluation ---")
     y_pred_linear = linear_model.predict(X_test)
@@ -37,9 +48,8 @@ def evaluate_models():
     r2 = r2_score(y_test, y_pred_linear)
     print("Mean Squared Error:", mse)
     print("R² Score:", r2)
-
-    # --- SVM Evaluation ---
-    print("\n--- SVM Evaluation ---")
-    y_pred_svm = svm_model.predict(X_test)
-    print("Accuracy:", accuracy_score(y_test, y_pred_svm))
-    print("Classification Report:\n", classification_report(y_test, y_pred_svm))
+    table = pd.DataFrame({
+        "Metric": ["Mean Squared Error", "R² Score"],
+        "Value": [mse, r2]
+    })
+    print(table)
