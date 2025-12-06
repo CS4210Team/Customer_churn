@@ -6,6 +6,8 @@ venv/
 kaggle.json
 
 # data
-data/
+project/data/
 
 __pycache__/
+
+project/models/

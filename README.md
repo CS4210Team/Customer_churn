@@ -15,16 +15,27 @@ This project downloads and loads the <strong>Telco Customer Churn</strong> datas
 <h2>1. Project Structure</h2>
 
 <pre>
-customer_churn_project/
+CUSTOMER_CHURN/
 │
-├── venv/                   # Virtual environment
-├── data/                   # Dataset (auto-created)
+├── project/                 # Main Python package
+│   ├── data_utils.py        # Downloading, unzipping, loading, preprocessing
+│   ├── train.py             # Model training and saving
+│   ├── evaluate.py          # Model loading and evaluation
+│   │
+│   ├── models/              # SAVED trained models + test data
+│   │   ├── log_model.joblib
+│   │   ├── tree_model.joblib
+│   │   ├── linear_model.joblib
+│   │   ├── svm_model.joblib
+│   │   └── test_data.joblib
+│   │
+│   └── data/                # Raw downloaded data goes here
 │
-├── .env                    # Kaggle credentials
+├── main.py                  # Single app entrypoint
+├── .env                     # Kaggle keys
 ├── .gitignore
-├── requirements.txt
-├── download_dataset.py
-└── README.html
+├── requirements.txt         # Python dependencies
+└── README.md                # Project documentation
 </pre>
 
 <hr>
@@ -73,12 +84,12 @@ KAGGLE_KEY=your_kaggle_api_key
 
 <hr>
 
-<h2>6. Run the Dataset Downloader</h2>
+<h2>6. Run the main file to download the dataset, train the model, and evaluate the model</h2>
 
 <p>Make sure your virtual environment is activated, then run:</p>
 
 <pre>
-python download_dataset.py
+python main.py
 </pre>
 
 <p>This script will:</p>
@@ -88,12 +99,13 @@ python download_dataset.py
   <li>Download the dataset ZIP into <code>data/</code></li>
   <li>Extract the files</li>
   <li>Load the CSV using pandas</li>
-  <li>Print the first few rows</li>
+  <li>Train the models</li>
+  <li>Evaluate the models</li>
 </ul>
 
 <hr>
 
-<h2>7. After Downloading</h2>
+<h2>7. After running</h2>
 
 <p>You will see:</p>
 
@@ -101,6 +113,15 @@ python download_dataset.py
 data/
  ├── telco-customer-churn.zip
  └── WA_Fn-UseC_-Telco-Customer-Churn.csv
+</pre>
+
+<pre>
+project/
+ ├── linear_model.joblib
+ ├── log_model.joblib
+ ├── svm_model.joblib
+ ├── test_data.joblib
+ └── tree_model.joblib 
 </pre>
 
 <hr>
