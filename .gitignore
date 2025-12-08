@@ -11,3 +11,5 @@ project/data/
 __pycache__/
 
 project/models/
+
+*.joblib
