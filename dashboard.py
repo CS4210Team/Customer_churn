@@ -241,37 +241,18 @@ with tab_logreg:
     if 'y_test' in globals():
         accuracy = get_logreg_score(X_test, y_test)
         st.write(f"Model Accuracy: {accuracy:.2%}")
+        
+    # Decision boundary + probability surface plot
+    st.subheader("Decision Boundary & Probability Surface (Top 2 Features)")
 
-    # Combined plots for 2 features
-    if X_test.shape[1] >= 2:
-        st.subheader("Decision Boundary + Probability Surface (Top 2 Features)")
+    # Generate the figure
+    fig = plot_logreg_combined(X_test, y_test if 'y_test' in globals() else np.zeros(len(X_test)))
 
-        # Get top 2 features
-        top_features = get_top2_features(X_test)
-        X_plot = X_test[top_features]
-
-        # Create the combined figure
-        fig = plot_logreg_combined(X_test, y_test)
-
-        # Highlight top 10 points on probability surface
-        model = joblib.load(MODEL_PATH)
-        probs = model.predict_proba(ensure_dataframe(X_test))[:, 1]
-        top10_idx = np.argsort(probs)[-10:]
-        axes = fig.axes  # axes[1] is probability surface
-        axes[1].scatter(
-            X_plot.iloc[top10_idx, 0],
-            X_plot.iloc[top10_idx, 1],
-            facecolors='none', edgecolors='yellow',
-            s=100, linewidths=2, label='Top 10 Prob Points'
-        )
-        axes[1].legend()
-
-        st.pyplot(fig)
-    else:
-        st.write("Combined plots require at least 2 features.")
+    # Display it in Streamlit
+    st.pyplot(fig)
 
 
-
+   
 with tab_tree:
     st.subheader("Decision Tree Model")
 

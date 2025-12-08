@@ -1,5 +1,7 @@
+# train.py
 import os
 import joblib
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from ...data_utils import download_kaggle_dataset, unzip_dataset, load_csv, preprocess_data
@@ -9,7 +11,7 @@ MODEL_PATH = os.path.join(BASE_DIR, "log_model.joblib")
 DATA_DIR = os.path.join(BASE_DIR, "..")  # store shared data here
 TEST_DATA_PATH = os.path.join(DATA_DIR, "test_data.joblib")
 FULL_DATA_PATH = os.path.join(DATA_DIR, "full_data.joblib")
-FEATURE_NAMES_PATH = os.path.join(DATA_DIR, "feature_names.joblib")  # NEW
+FEATURE_NAMES_PATH = os.path.join(DATA_DIR, "feature_names.joblib")
 
 os.makedirs(BASE_DIR, exist_ok=True)
 
@@ -17,11 +19,20 @@ def train_logreg():
     # Download and preprocess data
     download_kaggle_dataset()
     unzip_dataset()
-    df = load_csv()
+    df = load_csv()  # original raw DataFrame
+
+    # Preprocess data (X might be ndarray)
     X, y = preprocess_data(df)
 
-    # Save post-processed feature names
-    joblib.dump(X.columns.tolist(), FEATURE_NAMES_PATH)
+    # Generate feature names for post-processed X
+    feature_names = [f"Feature_{i}" for i in range(X.shape[1])]
+
+    # Convert X to DataFrame with proper column names
+    if not hasattr(X, "columns"):
+        X = pd.DataFrame(X, columns=feature_names)
+
+    # Save feature names
+    joblib.dump(feature_names, FEATURE_NAMES_PATH)
 
     # Train/test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
