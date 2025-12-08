@@ -6,7 +6,7 @@ venv/
 kaggle.json
 
 # data
-project/data/
+data/
 
 __pycache__/
 

@@ -8,6 +8,7 @@ import seaborn as sns
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_squared_error, r2_score, make_scorer, precision_score, recall_score, f1_score
 from sklearn.model_selection import cross_val_score
 from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score, plot_logreg_decision_boundary, plot_logreg_combined
+from project.model_utils.knn.analysis import get_knn_probabilities, get_knn_predictions, get_knn_score, plot_knn_combined
 
 st.set_page_config(page_title="Customer Churn ML Dashboard", layout="wide")
 st.title("Customer Churn Report")
@@ -260,4 +261,25 @@ with tab_svm:
     st.subheader("SVM Model")
 
 with tab_knn:
-    st.subheader("KNN Model")
+    st.subheader("K-Nearest Neighbors Model")
+
+    # Top 10 predicted probabilities
+    st.subheader("Top 10 Predicted Probabilities")
+    knn_prob_df = get_knn_probabilities(X_test, top_n=10)
+    st.dataframe(knn_prob_df)
+
+    # Predicted classes
+    st.subheader("Predicted Classes (Top 10)")
+    knn_pred_series = get_knn_predictions(X_test)
+    st.dataframe(knn_pred_series.head(10))
+
+    # Model accuracy 
+    knn_accuracy = get_knn_score(X_test, y_test)
+    st.write(f"KNN Model Accuracy: {knn_accuracy:.2%}")
+
+    # Decision boundary + probability surface plot
+    st.subheader("Decision Boundary & Probability Surface (Top 2 Features)")
+
+    fig_knn = plot_knn_combined(X_test, y_test)
+    
+    st.pyplot(fig_knn)
