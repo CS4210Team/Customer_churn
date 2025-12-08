@@ -1,6 +1,6 @@
 import os
 import joblib
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from ...data_utils import download_kaggle_dataset, unzip_dataset, load_csv, preprocess_data
 
@@ -20,8 +20,20 @@ def train_knn():
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = KNeighborsClassifier(n_neighbors=5, weights="distance", metric="minkowski", p=2)
-    model.fit(X_train, y_train)
+    # Hyperparameter tuning with GridSearchCV
+    param_grid = {
+        "n_neighbors": [5, 10, 15, 20, 25, 30, 35, 40],
+        "weights": ["uniform", "distance"],
+    }
+
+    # Initialize GridSearchCV
+    grid = GridSearchCV(KNeighborsClassifier(p=1), param_grid=param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+
+    # Fit model
+    grid.fit(X_train, y_train)
+
+    # Get best model
+    model = grid.best_estimator_
 
     joblib.dump(model, MODEL_PATH)
     if not os.path.exists(TEST_DATA_PATH):
