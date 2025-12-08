@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_squared_error, r2_score, make_scorer, precision_score, recall_score, f1_score
 from sklearn.model_selection import cross_val_score
+from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score, plot_logreg_decision_boundary, plot_logreg_combined
 
 st.set_page_config(page_title="Customer Churn ML Dashboard", layout="wide")
 st.title("Customer Churn Report")
@@ -17,16 +18,21 @@ df = load_csv()
 
 # --- Load models ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "project", "models")
 
-models = {
-    "Logistic Regression": joblib.load(os.path.join(MODELS_DIR, "log_model.joblib")),
-    "Decision Tree": joblib.load(os.path.join(MODELS_DIR, "tree_model.joblib")),
-    "SVM": joblib.load(os.path.join(MODELS_DIR, "svm_model.joblib")),
-    "KNN": joblib.load(os.path.join(MODELS_DIR, "knn_model.joblib")),
+# Paths to models
+MODEL_PATHS = {
+    "Logistic Regression": os.path.join(BASE_DIR, "project/model_utils/logreg/log_model.joblib"),
+    "Decision Tree": os.path.join(BASE_DIR, "project/model_utils/tree/tree_model.joblib"),
+    "KNN": os.path.join(BASE_DIR, "project/model_utils/knn/knn_model.joblib"),
+    "SVM": os.path.join(BASE_DIR, "project/model_utils/svm/svm_model.joblib"),
 }
 
-X_test, y_test = joblib.load(os.path.join(MODELS_DIR, "test_data.joblib"))
+# Load all models
+models = {name: joblib.load(path) for name, path in MODEL_PATHS.items()}
+
+# Shared test data path
+DATA_DIR = os.path.join(BASE_DIR, "project/model_utils")  # parent folder of all models
+X_test, y_test = joblib.load(os.path.join(DATA_DIR, "test_data.joblib"))
 
 # tabs layout
 tab_data, tab_overall, tab_logreg, tab_tree, tab_svm, tab_knn = st.tabs(
@@ -215,6 +221,56 @@ with tab_overall:
 
 with tab_logreg:
     st.subheader("Logistic Regression Model")
+
+    # Coefficients and intercept
+    coef_df, intercept = get_logreg_weights(X_test)
+    st.dataframe(coef_df)
+    st.write(f"Intercept: {intercept}")
+
+    # Top 10 predicted probabilities
+    st.subheader("Top 10 Predicted Probabilities")
+    prob_df = get_logreg_probabilities(X_test, top_n=10)
+    st.dataframe(prob_df)
+
+    # Predicted classes
+    st.subheader("Predicted Classes (Top 10)")
+    pred_series = get_logreg_predictions(X_test)
+    st.dataframe(pred_series.head(10))
+
+    # Model accuracy
+    if 'y_test' in globals():
+        accuracy = get_logreg_score(X_test, y_test)
+        st.write(f"Model Accuracy: {accuracy:.2%}")
+
+    # Combined plots for 2 features
+    if X_test.shape[1] >= 2:
+        st.subheader("Decision Boundary + Probability Surface (Top 2 Features)")
+
+        # Get top 2 features
+        top_features = get_top2_features(X_test)
+        X_plot = X_test[top_features]
+
+        # Create the combined figure
+        fig = plot_logreg_combined(X_test, y_test)
+
+        # Highlight top 10 points on probability surface
+        model = joblib.load(MODEL_PATH)
+        probs = model.predict_proba(ensure_dataframe(X_test))[:, 1]
+        top10_idx = np.argsort(probs)[-10:]
+        axes = fig.axes  # axes[1] is probability surface
+        axes[1].scatter(
+            X_plot.iloc[top10_idx, 0],
+            X_plot.iloc[top10_idx, 1],
+            facecolors='none', edgecolors='yellow',
+            s=100, linewidths=2, label='Top 10 Prob Points'
+        )
+        axes[1].legend()
+
+        st.pyplot(fig)
+    else:
+        st.write("Combined plots require at least 2 features.")
+
+
 
 with tab_tree:
     st.subheader("Decision Tree Model")

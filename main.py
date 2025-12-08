@@ -1,5 +1,5 @@
-from project.train import train_models
-from project.evaluate import evaluate_models
+from project.train_all import train_all_models
+from project.evaluate_all import evaluate_all_models
 
 def main():
     print("Choose an option:")
@@ -11,16 +11,16 @@ def main():
 
     if choice == "1":
         print("\n TRAINING MODE \n")
-        train_models()
+        train_all_models()
 
     elif choice == "2":
         print("\n EVALUATION MODE \n")
-        evaluate_models()
+        evaluate_all_models()
 
     else:
         print("\n TRAINING THEN EVALUATION \n")
-        train_models()
-        evaluate_models()
+        train_all_models()
+        evaluate_all_models()
 
 if __name__ == "__main__":
     main()
