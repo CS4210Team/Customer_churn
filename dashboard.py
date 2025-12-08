@@ -5,9 +5,9 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, mean_squared_error, r2_score, make_scorer, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, make_scorer, precision_score, recall_score, f1_score
 from sklearn.model_selection import cross_val_score
-from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score, plot_logreg_decision_boundary, plot_logreg_combined
+from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score,plot_logreg_combined
 from project.model_utils.knn.analysis import get_knn_probabilities, get_knn_predictions, get_knn_score, plot_knn_combined
 from project.model_utils.svm.analysis import get_svm_decision_scores, get_svm_predictions, get_svm_score, plot_svm_combined
 
@@ -248,7 +248,7 @@ with tab_logreg:
     st.subheader("Decision Boundary & Probability Surface (Top 2 Features)")
 
     # Generate the figure
-    fig = plot_logreg_combined(X_test, y_test if 'y_test' in globals() else np.zeros(len(X_test)))
+    fig = plot_logreg_combined(X_test, y_test)
 
     # Display it in Streamlit
     st.pyplot(fig)
