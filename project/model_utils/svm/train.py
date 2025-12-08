@@ -1,6 +1,6 @@
 import os
 import joblib
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.svm import SVC
 from ...data_utils import download_kaggle_dataset, unzip_dataset, load_csv, preprocess_data
 
@@ -12,16 +12,29 @@ FULL_DATA_PATH = os.path.join(DATA_DIR, "full_data.joblib")
 
 os.makedirs(BASE_DIR, exist_ok=True)
 
+# Train SVM model
 def train_svm():
     download_kaggle_dataset()
     unzip_dataset()
     df = load_csv()
     X, y = preprocess_data(df)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Split data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-    model = SVC(kernel="rbf", C=1.0, gamma="scale")
-    model.fit(X_train, y_train)
+    # Hyperparameter tuning with GridSearchCV
+    params = {
+        "C": [0.1, 1, 5, 10],
+        "gamma": ["scale", 0.01, 0.1, 1],
+        "kernel": ["rbf"]
+    }
+
+    # Initialize GridSearchCV
+    grid = GridSearchCV(SVC(), param_grid=params, cv=3, scoring="accuracy", n_jobs=-1)
+
+    # Fit model
+    grid.fit(X_train, y_train)
+    model = grid.best_estimator_
 
     joblib.dump(model, MODEL_PATH)
     if not os.path.exists(TEST_DATA_PATH):

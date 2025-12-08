@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 from sklearn.model_selection import cross_val_score
 from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score, plot_logreg_decision_boundary, plot_logreg_combined
 from project.model_utils.knn.analysis import get_knn_probabilities, get_knn_predictions, get_knn_score, plot_knn_combined
+from project.model_utils.svm.analysis import get_svm_decision_scores, get_svm_predictions, get_svm_score, plot_svm_combined
 
 st.set_page_config(page_title="Customer Churn ML Dashboard", layout="wide")
 st.title("Customer Churn Report")
@@ -259,6 +260,25 @@ with tab_tree:
 
 with tab_svm:
     st.subheader("SVM Model")
+
+    # Top 10 decision scores
+    st.subheader("Top 10 Decision Scores")
+    score_df = get_svm_decision_scores(X_test, top_n=10)
+    st.dataframe(score_df)
+
+    # Predicted classes
+    st.subheader("Predicted Classes (Top 10)")
+    svm_pred_series = get_svm_predictions(X_test)
+    st.dataframe(svm_pred_series.head(10))
+
+    # Model accuracy
+    svm_accuracy = get_svm_score(X_test, y_test)
+    st.write(f"SVM Model Accuracy: {svm_accuracy:.2%}")
+
+    # Decision boundary + score surface plot
+    st.subheader("Decision Boundary & Score Surface (MontlyCharges vs TotalCharges)")
+    fig_svm = plot_svm_combined(X_test, y_test)
+    st.pyplot(fig_svm)
 
 with tab_knn:
     st.subheader("K-Nearest Neighbors Model")
