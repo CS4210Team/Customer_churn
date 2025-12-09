@@ -119,38 +119,38 @@ with tab_data:
 # overall results tab
 with tab_overall:
     # --- Cross-Validation Section ---
-    st.subheader("Cross-Validation Scores")
+    # st.subheader("Cross-Validation Scores")
 
-    run_cv = st.checkbox("Run cross-validation?", value=False)
+    # run_cv = st.checkbox("Run cross-validation?", value=False)
 
-    if run_cv:
-        cv_folds = st.slider("Select number of folds:", min_value=2, max_value=10, value=5)
-        cv_metrics = []
+    # if run_cv:
+    #     cv_folds = st.slider("Select number of folds:", min_value=2, max_value=10, value=5)
+    #     cv_metrics = []
 
-        # Define scorers for CV
-        scoring = {
-            "Accuracy": "accuracy",
-            "Precision": make_scorer(
-                precision_score, average="weighted", zero_division=0
-            ),
-            "Recall": make_scorer(
-                recall_score, average="weighted", zero_division=0
-            ),
-            "F1-score": make_scorer(
-                f1_score, average="weighted", zero_division=0
-            ),
-        }
+    #     # Define scorers for CV
+    #     scoring = {
+    #         "Accuracy": "accuracy",
+    #         "Precision": make_scorer(
+    #             precision_score, average="weighted", zero_division=0
+    #         ),
+    #         "Recall": make_scorer(
+    #             recall_score, average="weighted", zero_division=0
+    #         ),
+    #         "F1-score": make_scorer(
+    #             f1_score, average="weighted", zero_division=0
+    #         ),
+    #     }
 
-        for name, model in models.items():
-            scores_dict = {"Model": name}
-            for metric_name, scorer in scoring.items():
-                scores = cross_val_score(model, X_test, y_test, cv=cv_folds, scoring=scorer)
-                scores_dict[f"{metric_name} Mean"] = round(scores.mean(), 3)
-                scores_dict[f"{metric_name} Std"] = round(scores.std(), 3)
-            cv_metrics.append(scores_dict)
+    #     for name, model in models.items():
+    #         scores_dict = {"Model": name}
+    #         for metric_name, scorer in scoring.items():
+    #             scores = cross_val_score(model, X_test, y_test, cv=cv_folds, scoring=scorer)
+    #             scores_dict[f"{metric_name} Mean"] = round(scores.mean(), 3)
+    #             scores_dict[f"{metric_name} Std"] = round(scores.std(), 3)
+    #         cv_metrics.append(scores_dict)
 
-        cv_df = pd.DataFrame(cv_metrics)
-        st.dataframe(cv_df)
+    #     cv_df = pd.DataFrame(cv_metrics)
+    #     st.dataframe(cv_df)
 
     # --- Eval models ---
     st.subheader("Model Performance Comparison")
