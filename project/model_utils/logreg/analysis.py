@@ -69,10 +69,7 @@ def get_top2_features(X):
     Handles both pandas DataFrame and NumPy array.
     """
     X = ensure_dataframe(X)
-    model = joblib.load(MODEL_PATH)
-    coef_df = pd.DataFrame(model.coef_, columns=X.columns)
-    top_features = coef_df.abs().sum().sort_values(ascending=False).index[:2]
-    return list(top_features)
+    return list(X.columns[:2])
 
 
 def plot_logreg_decision_boundary(X, y):

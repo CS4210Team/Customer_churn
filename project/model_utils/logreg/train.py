@@ -8,7 +8,7 @@ from ...data_utils import download_kaggle_dataset, unzip_dataset, load_csv, prep
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "log_model.joblib")
-DATA_DIR = os.path.join(BASE_DIR, "..")  # store shared data here
+DATA_DIR = os.path.join(BASE_DIR, "..") 
 TEST_DATA_PATH = os.path.join(DATA_DIR, "test_data.joblib")
 FULL_DATA_PATH = os.path.join(DATA_DIR, "full_data.joblib")
 FEATURE_NAMES_PATH = os.path.join(DATA_DIR, "feature_names.joblib")
@@ -19,7 +19,7 @@ def train_logreg():
     # Download and preprocess data
     download_kaggle_dataset()
     unzip_dataset()
-    df = load_csv()  # original raw DataFrame
+    df = load_csv()
 
     # Preprocess data (X might be ndarray)
     X, y = preprocess_data(df)
@@ -38,7 +38,7 @@ def train_logreg():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Train logistic regression
-    model = LogisticRegression(max_iter=1000)
+    model = LogisticRegression(max_iter=10000)
     model.fit(X_train, y_train)
 
     # Save model and shared data

@@ -52,9 +52,20 @@ with tab_data:
     with col_center:
         # --- Overall Dataset Graphs ---
         # Class distribution
-        fig, ax = plt.subplots()  # small figure
         class_counts = df["Churn"].value_counts()
-        sns.barplot(x=class_counts.index, y=class_counts.values, ax=ax, palette="Set2")
+        class_df = class_counts.reset_index()
+        class_df.columns = ["Churn", "Count"]
+
+        fig, ax = plt.subplots()
+        sns.barplot(
+            data=class_df,
+            x="Churn",
+            y="Count",
+            hue="Churn",  
+            palette="Set2",
+            legend=False,     
+            ax=ax,
+        )
         ax.set_xlabel("Churn")
         ax.set_ylabel("Count")
         st.pyplot(fig)

@@ -53,9 +53,11 @@ def get_svm_score(X, y):
 
 
 def get_svm_top2_features(X):
-    """For visualization, use MonthlyCharges vs TotalCharges."""
+    """
+    Return the first 2 feature names from X.
+    """
     X = ensure_svm_dataframe(X)
-    return ["Feature_2", "Feature_3"]
+    return list(X.columns[:2])
 
 
 def plot_svm_combined(X, y, class_index=1, resolution=100):

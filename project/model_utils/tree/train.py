@@ -1,6 +1,6 @@
 import os
 import joblib
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier
 from ...data_utils import download_kaggle_dataset, unzip_dataset, load_csv, preprocess_data
 
@@ -18,13 +18,24 @@ def train_tree():
     df = load_csv()
     X, y = preprocess_data(df)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # stratify because of imbalance
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-    model = DecisionTreeClassifier(max_depth=5, random_state=42)
-    model.fit(X_train, y_train)
+    tree = DecisionTreeClassifier(random_state=42)
 
-    joblib.dump(model, MODEL_PATH)
-    # Save shared data if not already saved
+    # grid around what worked
+    param_grid = {"max_depth": [4, 5, 6], "min_samples_split": [2, 10, 20], 
+                  "min_samples_leaf": [1, 5, 10], "criterion": ["gini", "entropy"]}
+
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    grid = GridSearchCV(tree, param_grid=param_grid, cv=cv, scoring="accuracy", n_jobs=-1)
+
+    grid.fit(X_train, y_train)
+    best_tree = grid.best_estimator_
+
+    joblib.dump(best_tree, MODEL_PATH)
+
     if not os.path.exists(TEST_DATA_PATH):
         joblib.dump((X_test, y_test), TEST_DATA_PATH)
         joblib.dump((X, y), FULL_DATA_PATH)
