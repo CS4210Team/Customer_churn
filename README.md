@@ -7,7 +7,7 @@
 <h1>Telco Customer Churn – Local Dataset Setup</h1>
 
 <p>
-This project downloads and loads the <strong>Telco Customer Churn</strong> dataset from Kaggle using a Python script, environment variables, and a virtual environment. It then trains and evaulates 4 different modles, displayingthe results on the terminal and a GUI.
+This project downloads and loads the <strong>Telco Customer Churn</strong> dataset from Kaggle using a Python script, environment variables, and a virtual environment. It then trains and evaulates 4 different modles, displaying the results on the terminal and a GUI.
 </p>
 
 <hr>
