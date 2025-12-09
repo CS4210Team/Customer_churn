@@ -10,6 +10,7 @@ from sklearn.model_selection import cross_val_score
 from project.model_utils.logreg.analysis import get_logreg_weights, get_logreg_probabilities, get_logreg_predictions, get_logreg_score,plot_logreg_combined
 from project.model_utils.knn.analysis import get_knn_probabilities, get_knn_predictions, get_knn_score, plot_knn_combined
 from project.model_utils.svm.analysis import get_svm_decision_scores, get_svm_predictions, get_svm_score, plot_svm_combined
+from project.model_utils.tree.analysis import get_tree_importances, get_tree_probabilities, get_tree_predictions, get_tree_score, plot_tree_combined
 
 st.set_page_config(page_title="Customer Churn ML Dashboard", layout="wide")
 st.title("Customer Churn Report")
@@ -263,11 +264,34 @@ with tab_logreg:
 
     # Display it in Streamlit
     st.pyplot(fig)
-
-
    
 with tab_tree:
     st.subheader("Decision Tree Model")
+
+    # Feature Importances
+    st.subheader("Feature Importances")
+    importance_df = get_tree_importances(X_test)
+    st.dataframe(importance_df)
+
+    # Top 10 predicted probabilities
+    st.subheader("Top 10 Predicted Probabilities")
+    prob_df = get_tree_probabilities(X_test, top_n=10)
+    st.dataframe(prob_df)
+
+    # Predicted classes
+    st.subheader("Predicted Classes (Top 10)")
+    pred_series = get_tree_predictions(X_test)
+    st.dataframe(pred_series.head(10))
+
+    # Model accuracy
+    if 'y_test' in globals():
+        accuracy = get_tree_score(X_test, y_test)
+        st.write(f"Decision Tree Accuracy: {accuracy:.2%}")
+
+    # Decision boundary + probability surface plot
+    st.subheader("Decision Boundary & Probability Surface (Top 2 Features)")
+    fig_tree = plot_tree_combined(X_test, y_test)
+    st.pyplot(fig_tree)
 
 with tab_svm:
     st.subheader("SVM Model")
