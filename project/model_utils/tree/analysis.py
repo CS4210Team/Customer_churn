@@ -22,9 +22,13 @@ def ensure_dataframe(X):
         return pd.DataFrame(X, columns=[f"Feature_{i}" for i in range(n_features)])
 
 
-def get_tree_importances(X=None):
+def get_tree_importances(X=None, top_n=10):
     """
     Return feature importances from the decision tree.
+    
+    Parameters:
+        X (DataFrame or None): Optional dataset to get feature names.
+        top_n (int): Number of top features to return.
     """
     model: DecisionTreeClassifier = joblib.load(MODEL_PATH)
 
@@ -39,7 +43,9 @@ def get_tree_importances(X=None):
         "Importance": model.feature_importances_
     }).sort_values("Importance", ascending=False)
 
-    return importance_df
+    # Keep only top N important features
+    importance_df = importance_df[importance_df["Importance"] > 0]  # remove zero importance
+    return importance_df.head(top_n)
 
 
 def get_tree_probabilities(X, top_n=None):
