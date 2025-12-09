@@ -58,8 +58,8 @@ KAGGLE_KEY=your_kaggle_api_key
 
 <h2>5. Run the main file to download the dataset, train the model, and evaluate the model</h2>
  
-<p>YOu need to run main to train the models at least once before you can run the UI</p>
-<p>Make sure your virtual environment is activated, then run:</p>
+<p>You need to run main to train the models at least once before you can run the UI</p>
+<p><strong>Make sure your virtual environment is activated, then run:</strong></p>
 
 <pre>
 python main.py
