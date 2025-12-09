@@ -1,4 +1,5 @@
 # UI, to run --> "streamlit run dashboard.py" 
+# Note: you have to run main and train first before running dash 
 import os
 import joblib
 import pandas as pd
